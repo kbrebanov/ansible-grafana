@@ -1,0 +1,144 @@
+---
+# defaults file for grafana
+
+grafana_version: 2.6.0
+
+grafana_app_mode: production
+grafana_max_open_files: 10000
+grafana_restart_on_upgrade: false
+
+grafana_server_cert_file: ''
+grafana_server_cert_key: ''
+grafana_server_domain: localhost
+grafana_server_enable_gzip: false
+grafana_server_enforce_domain: false
+grafana_server_http_addr: ''
+grafana_server_http_port: 3000
+grafana_server_protocol: http
+grafana_server_root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+grafana_server_router_logging: false
+grafana_server_static_root_path: public
+
+grafana_database_type: sqlite3
+grafana_database_host: 127.0.0.1:3306
+grafana_database_name: grafana
+grafana_database_user: root
+grafana_database_password: ''
+grafana_database_postgres_ssl_mode: disable
+grafana_database_sqlite3_path: grafana.db
+
+grafana_session_cookie_name: grafana_sess
+grafana_session_cookie_secure: false
+grafana_session_life_time: 86400
+grafana_session_provider: file
+grafana_session_provider_config: sessions
+
+grafana_analytics_reporting_enabled: true
+grafana_analytics_google_analytics_ua_id: ''
+
+grafana_security_admin_user: admin
+grafana_security_admin_password: admin
+grafana_security_cookie_remember_name: grafana_remember
+grafana_security_cookie_username: grafana_user
+grafana_security_data_source_proxy_whitelist: ''
+grafana_security_disable_gravatar: false
+grafana_security_login_remember_days: 7
+grafana_security_secret_key: SW2YcwTIb9zpOOhoPsMm
+
+grafana_users_allow_org_create: true
+grafana_users_allow_sign_up: true
+grafana_users_auto_assign_org: true
+grafana_users_auto_assign_org_role: Viewer
+grafana_users_login_hint: email or username
+
+grafana_auth_anonymous_enabled: false
+grafana_auth_anonymous_org_name: Main Org.
+grafana_auth_anonymous_org_role: Viewer
+
+grafana_auth_github_enabled: false
+grafana_auth_github_allow_sign_up: false
+grafana_auth_github_client_id: some_id
+grafana_auth_github_client_secret: some_secret
+grafana_auth_github_scopes: user:email,read:org
+grafana_auth_github_auth_url: https://github.com/login/oauth/authorize
+grafana_auth_github_token_url: https://github.com/login/oauth/access_token
+grafana_auth_github_api_url: https://api.github.com/user
+grafana_auth_github_team_ids: ''
+grafana_auth_github_allowed_organizations: ''
+
+grafana_auth_google_enabled: false
+grafana_auth_google_allow_sign_up: false
+grafana_auth_google_client_id: some_client_id
+grafana_auth_google_client_secret: some_client_secret
+grafana_auth_google_scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+grafana_auth_google_auth_url: https://accounts.google.com/o/oauth2/auth
+grafana_auth_google_token_url: https://accounts.google.com/o/oauth2/token
+grafana_auth_google_api_url: https://www.googleapis.com/oauth2/v1/userinfo
+grafana_auth_google_allowed_domains: ''
+
+grafana_auth_proxy_enabled: false
+grafana_auth_proxy_header_name: X-WEBAUTH-USER
+grafana_auth_proxy_header_property: username
+grafana_auth_proxy_auto_sign_up: true
+
+grafana_auth_basic_enabled: true
+
+grafana_auth_ldap_enabled: false
+grafana_auth_ldap_config_file: "{{ grafana_conf_dir }}/ldap.toml"
+grafana_auth_ldap_verbose_logging: false
+grafana_auth_ldap_servers_host: 127.0.0.1
+grafana_auth_ldap_servers_port: 389
+grafana_auth_ldap_servers_use_ssl: false
+grafana_auth_ldap_servers_ssl_skip_verify: false
+grafana_auth_ldap_servers_root_ca_cert: ''
+grafana_auth_ldap_servers_bind_dn: cn=admin,dc=grafana,dc=org
+grafana_auth_ldap_servers_bind_password: grafana
+grafana_auth_ldap_servers_search_filter: "(cn=%s)"
+grafana_auth_ldap_servers_search_base_dns: dc=grafana,dc=org
+grafana_auth_ldap_servers_group_search_filter: ''
+grafana_auth_ldap_servers_group_search_base_dns: ''
+grafana_auth_ldap_servers_attributes_name: givenName
+grafana_auth_ldap_servers_attributes_surname: sn
+grafana_auth_ldap_servers_attributes_username: cn
+grafana_auth_ldap_servers_attributes_member_of: memberOf
+grafana_auth_ldap_servers_attributes_email: email
+grafana_auth_ldap_servers_group_mappings:
+  - group_dn: cn=admins,dc=grafana,dc=org
+    org_role: Admin
+  - group_dn: cn=users,dc=grafana,dc=org
+    org_role: Editor
+  - group_dn: "*"
+    org_role: Viewer
+
+grafana_smtp_enabled: false
+grafana_smtp_host: localhost:25
+grafana_smtp_user: ''
+grafana_smtp_password: ''
+grafana_smtp_cert_file: ''
+grafana_smtp_key_file: ''
+grafana_smtp_skip_verify: false
+grafana_smtp_from_address: admin@grafana.localhost
+
+grafana_emails_welcome_email_on_sign_up: false
+
+grafana_log_mode:
+  - console
+  - file
+grafana_log_buffer_len: 10000
+grafana_log_level: Info
+
+grafana_log_console_level: ''
+
+grafana_log_file_level: ''
+grafana_log_file_log_rotate: true
+grafana_log_file_max_lines: 1000000
+grafana_log_file_max_lines_shift: 28
+grafana_log_file_daily_rotate: true
+grafana_log_file_max_days: 7
+
+grafana_event_publisher_enabled: false
+grafana_event_publisher_rabbitmq_url: amqp://localhost/
+grafana_event_publisher_exchange: grafana_events
+
+grafana_dashboards_json_enabled: false
+grafana_dashboards_json_path: "{{ grafana_data_dir }}/dashboards"

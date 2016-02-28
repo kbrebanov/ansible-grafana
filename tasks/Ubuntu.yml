@@ -1,0 +1,29 @@
+---
+# tasks file for grafana (Ubuntu specific)
+
+- name: Download Package Cloud GPG key
+  become: yes
+  apt_key:
+    url: https://packagecloud.io/gpg.key
+    state: present
+  tags:
+    - grafana
+
+- name: Configure Package Cloud APT repository
+  become: yes
+  apt_repository:
+    repo: 'deb https://packagecloud.io/grafana/stable/debian/ wheezy main'
+    state: present
+  tags:
+    - grafana
+
+- name: Install grafana packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - "{{ grafana_packages }}"
+  tags:
+    - grafana

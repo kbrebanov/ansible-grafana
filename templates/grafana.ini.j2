@@ -1,0 +1,395 @@
+# {{ ansible_managed }}
+
+##################### Grafana Configuration Example #####################
+#
+# Everything has defaults so you only need to uncomment things you want to
+# change
+
+# possible values : production, development
+app_mode = {{ grafana_app_mode }}
+
+#################################### Paths ####################################
+[paths]
+# Path to where grafana can store temp files, sessions, and the sqlite3 db (if that is used)
+#
+data = {{ grafana_data_dir }}
+#
+# Directory where grafana can store logs
+#
+logs = {{ grafana_log_dir }}
+
+#################################### Server ####################################
+[server]
+# Protocol (http or https)
+protocol = {{ grafana_server_protocol }}
+
+# The ip address to bind to, empty will bind to all interfaces
+{% if grafana_server_http_addr %}
+http_addr = {{ grafana_server_http_addr }}
+{% else %}
+http_addr =
+{% endif %}
+
+# The http port  to use
+http_port = {{ grafana_server_http_port }}
+
+# The public facing domain name used to access grafana from a browser
+domain = {{ grafana_server_domain }}
+
+# Redirect to correct domain if host header does not match domain
+# Prevents DNS rebinding attacks
+{% if grafana_server_enforce_domain %}
+enforce_domain = true
+{% else %}
+enforce_domain = false
+{% endif %}
+
+# The full public facing url
+root_url = {{ grafana_server_root_url }}
+
+# Log web requests
+{% if grafana_server_router_logging %}
+router_logging = true
+{% else %}
+router_logging = false
+{% endif %}
+
+# the path relative working path
+static_root_path = {{ grafana_server_static_root_path }}
+
+# enable gzip
+{% if grafana_server_enable_gzip %}
+enable_gzip = true
+{% else %}
+enable_gzip = false
+{% endif %}
+
+# https certs & key file
+{% if grafana_server_cert_file %}
+cert_file = {{ grafana_server_cert_file }}
+{% else %}
+cert_file =
+{% endif %}
+{% if grafana_server_cert_key %}
+cert_key = {{ grafana_server_cert_key }}
+{% else %}
+cert_key =
+{% endif %}
+
+#################################### Database ####################################
+[database]
+# Either "mysql", "postgres" or "sqlite3", it's your choice
+type = {{ grafana_database_type }}
+host = {{ grafana_database_host }}
+name = {{ grafana_database_name }}
+user = {{ grafana_database_user }}
+{% if grafana_database_password %}
+password = {{ grafana_database_password }}
+{% else %}
+password =
+{% endif %}
+
+# For "postgres" only, either "disable", "require" or "verify-full"
+ssl_mode = {{ grafana_database_postgres_ssl_mode }}
+
+# For "sqlite3" only, path relative to data_path setting
+path = {{ grafana_database_sqlite3_path }}
+
+#################################### Session ####################################
+[session]
+# Either "memory", "file", "redis", "mysql", "postgres", default is "file"
+provider = {{ grafana_session_provider }}
+
+# Provider config options
+# memory: not have any config yet
+# file: session dir path, is relative to grafana data_path
+# redis: config like redis server e.g. `addr=127.0.0.1:6379,pool_size=100,db=grafana`
+# mysql: go-sql-driver/mysql dsn config string, e.g. `user:password@tcp(127.0.0.1:3306)/database_name`
+# postgres: user=a password=b host=localhost port=5432 dbname=c sslmode=disable
+provider_config = {{ grafana_session_provider_config }}
+
+# Session cookie name
+cookie_name = {{ grafana_session_cookie_name }}
+
+# If you use session in https only, default is false
+cookie_secure = {{ grafana_session_cookie_secure }}
+
+# Session life time, default is 86400
+session_life_time = {{ grafana_session_life_time }}
+
+#################################### Analytics ####################################
+[analytics]
+# Server reporting, sends usage counters to stats.grafana.org every 24 hours.
+# No ip addresses are being tracked, only simple counters to track
+# running instances, dashboard and error counts. It is very helpful to us.
+# Change this option to false to disable reporting.
+reporting_enabled = {{ grafana_analytics_reporting_enabled }}
+
+# Google Analytics universal tracking code, only enabled if you specify an id here
+{% if grafana_analytics_google_analytics_ua_id %}
+google_analytics_ua_id = {{ grafana_analytics_google_analytics_ua_id }}
+{% else %}
+google_analytics_ua_id =
+{% endif %}
+
+#################################### Security ####################################
+[security]
+# default admin user, created on startup
+admin_user = {{ grafana_security_admin_user }}
+
+# default admin password, can be changed before first start of grafana,  or in profile settings
+admin_password = {{ grafana_security_admin_password }}
+
+# used for signing
+secret_key = {{ grafana_security_secret_key }}
+
+# Auto-login remember days
+login_remember_days = {{ grafana_security_login_remember_days }}
+cookie_username = {{ grafana_security_cookie_username }}
+cookie_remember_name = {{ grafana_security_cookie_remember_name }}
+
+# disable gravatar profile images
+{% if grafana_security_disable_gravatar %}
+disable_gravatar = true
+{% else %}
+disable_gravatar = false
+{% endif %}
+
+# data source proxy whitelist (ip_or_domain:port seperated by spaces)
+{% if grafana_security_data_source_proxy_whitelist %}
+data_source_proxy_whitelist = {{ grafana_security_data_source_proxy_whitelist }}
+{% else %}
+data_source_proxy_whitelist =
+{% endif %}
+
+#################################### Users ####################################
+[users]
+# disable user signup / registration
+{% if grafana_users_allow_sign_up %}
+allow_sign_up = true
+{% else %}
+allow_sign_up = false
+{% endif %}
+
+# Allow non admin users to create organizations
+{% if grafana_users_allow_org_create %}
+allow_org_create = true
+{% else %}
+allow_org_create = false
+{% endif %}
+
+# Set to true to automatically assign new users to the default organization (id 1)
+{% if grafana_users_auto_assign_org %}
+auto_assign_org = true
+{% else %}
+auto_assign_org = false
+{% endif %}
+
+# Default role new users will be automatically assigned (if disabled above is set to true)
+auto_assign_org_role = {{ grafana_users_auto_assign_org_role }}
+
+# Background text for the user field on the login page
+login_hint = {{ grafana_users_login_hint }}
+
+#################################### Anonymous Auth ##########################
+[auth.anonymous]
+# enable anonymous access
+{% if grafana_auth_anonymous_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+
+# specify organization name that should be used for unauthenticated users
+org_name = {{ grafana_auth_anonymous_org_name }}
+
+# specify role for unauthenticated users
+org_role = {{ grafana_auth_anonymous_org_role }}
+
+#################################### Github Auth ##########################
+[auth.github]
+{% if grafana_auth_github_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+{% if grafana_auth_github_allow_sign_up %}
+allow_sign_up = true
+{% else %}
+allow_sign_up = false
+{% endif %}
+client_id = {{ grafana_auth_github_client_id }}
+client_secret = {{ grafana_auth_github_client_secret }}
+scopes = {{ grafana_auth_github_scopes }}
+auth_url = {{ grafana_auth_github_auth_url }}
+token_url = {{ grafana_auth_github_token_url }}
+api_url = {{ grafana_auth_github_api_url }}
+{% if grafana_auth_github_team_ids %}
+team_ids = {{ grafana_auth_github_team_ids }}
+{% else %}
+team_ids =
+{% endif %}
+{% if grafana_auth_github_allowed_organizations %}
+allowed_organizations = {{ grafana_auth_github_allowed_organizations }}
+{% else %}
+allowed_organizations =
+{% endif %}
+
+#################################### Google Auth ##########################
+[auth.google]
+{% if grafana_auth_google_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+{% if grafana_auth_google_allow_sign_up %}
+allow_sign_up = true
+{% else %}
+allow_sign_up = false
+{% endif %}
+client_id = {{ grafana_auth_google_client_id }}
+client_secret = {{ grafana_auth_google_client_secret }}
+scopes = {{ grafana_auth_google_scopes }}
+auth_url = {{ grafana_auth_google_auth_url }}
+token_url = {{ grafana_auth_google_token_url }}
+api_url = {{ grafana_auth_google_api_url }}
+{% if grafana_auth_google_allowed_domains %}
+allowed_domains = {{ grafana_auth_google_allowed_domains }}
+{% else %}
+allowed_domains =
+{% endif %}
+
+#################################### Auth Proxy ##########################
+[auth.proxy]
+{% if grafana_auth_proxy_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+header_name = {{ grafana_auth_proxy_header_name }}
+header_property = {{ grafana_auth_proxy_header_property }}
+{% if grafana_auth_proxy_auto_sign_up %}
+auto_sign_up = true
+{% else %}
+auto_sign_up = false
+{% endif %}
+
+#################################### Basic Auth ##########################
+[auth.basic]
+{% if grafana_auth_basic_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+
+#################################### Auth LDAP ##########################
+[auth.ldap]
+{% if grafana_auth_ldap_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+config_file = {{ grafana_auth_ldap_config_file }}
+
+#################################### SMTP / Emailing ##########################
+[smtp]
+{% if grafana_smtp_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+host = {{ grafana_smtp_host }}
+{% if grafana_smtp_user %}
+user = {{ grafana_smtp_user }}
+{% else %}
+user =
+{% endif %}
+{% if grafana_smtp_password %}
+password = {{ grafana_smtp_password }}
+{% else %}
+password =
+{% endif %}
+{% if grafana_smtp_cert_file %}
+cert_file = {{ grafana_smtp_cert_file }}
+{% else %}
+cert_file =
+{% endif %}
+{% if grafana_smtp_key_file %}
+key_file = {{ grafana_smtp_key_file }}
+{% else %}
+key_file =
+{% endif %}
+skip_verify = {{ grafana_smtp_skip_verify }}
+from_address = {{ grafana_smtp_from_address }}
+
+[emails]
+welcome_email_on_sign_up = {{ grafana_emails_welcome_email_on_sign_up }}
+
+#################################### Logging ##########################
+[log]
+# Either "console", "file", default is "console"
+# Use comma to separate multiple modes, e.g. "console, file"
+mode = {{ grafana_log_mode | join(", ") }}
+
+# Buffer length of channel, keep it as it is if you don't know what it is.
+buffer_len = {{ grafana_log_buffer_len }}
+
+# Either "Trace", "Debug", "Info", "Warn", "Error", "Critical", default is "Trace"
+level = {{ grafana_log_level }}
+
+# For "console" mode only
+[log.console]
+{% if grafana_log_console_level %}
+level = {{ grafana_log_console_level }}
+{% else %}
+level =
+{% endif %}
+
+# For "file" mode only
+[log.file]
+{% if grafana_log_file_level %}
+level = {{ grafana_log_file_level }}
+{% else %}
+level =
+{% endif %}
+# This enables automated log rotate(switch of following options), default is true
+{% if grafana_log_file_log_rotate %}
+log_rotate = true
+{% else %}
+log_rotate = false
+{% endif %}
+
+# Max line number of single file, default is 1000000
+max_lines = {{ grafana_log_file_max_lines }}
+
+# Max size shift of single file, default is 28 means 1 << 28, 256MB
+max_lines_shift = {{ grafana_log_file_max_lines_shift }}
+
+# Segment log daily, default is true
+{% if grafana_log_file_daily_rotate %}
+daily_rotate = true
+{% else %}
+daily_rotate = false
+{% endif %}
+
+# Expired days of log file(delete after max days), default is 7
+max_days = {{ grafana_log_file_max_days }}
+
+#################################### AMPQ Event Publisher ##########################
+[event_publisher]
+{% if grafana_event_publisher_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+rabbitmq_url = {{ grafana_event_publisher_rabbitmq_url }}
+exchange = {{ grafana_event_publisher_exchange }}
+
+;#################################### Dashboard JSON files ##########################
+[dashboards.json]
+{% if grafana_dashboards_json_enabled %}
+enabled = true
+{% else %}
+enabled = false
+{% endif %}
+path = {{ grafana_dashboards_json_path }}

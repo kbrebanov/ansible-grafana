@@ -1,0 +1,65 @@
+---
+# tasks file for grafana
+
+- name: Include distribution specific variables
+  include_vars: "{{ ansible_distribution }}.yml"
+  tags:
+    - grafana
+
+- include: CentOS.yml
+  when: ansible_distribution == "CentOS"
+  tags:
+    - grafana
+
+- include: Ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+  tags:
+    - grafana
+
+- name: Template Grafana defaults
+  become: yes
+  template:
+    src: defaults.j2
+    dest: /etc/default/grafana-server
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart grafana
+  tags:
+    - grafana
+
+- name: Template Grafana configuration
+  become: yes
+  template:
+    src: grafana.ini.j2
+    dest: "{{ grafana_conf_file }}"
+    owner: root
+    group: "{{ grafana_group }}"
+    mode: 0640
+  notify:
+    - restart grafana
+  tags:
+    - grafana
+
+- name: Template Grafana LDAP configuration
+  become: yes
+  template:
+    src: ldap.toml.j2
+    dest: "{{ grafana_auth_ldap_config_file }}"
+    owner: root
+    group: "{{ grafana_group }}"
+    mode: 0640
+  notify:
+    - restart grafana
+  tags:
+    - grafana
+
+- name: Ensure Grafana service is started and enabled on boot
+  become: yes
+  service:
+    name: "{{ grafana_service_name }}"
+    state: started
+    enabled: yes
+  tags:
+    - grafana
