@@ -2,7 +2,7 @@
 # vars file for grafana (Ubuntu specific)
 
 grafana_packages:
-  - grafana={{ grafana_version }}
+  - grafana={{ grafana_version }}*
 grafana_service_name: grafana-server
 grafana_user: grafana
 grafana_group: grafana

@@ -1,7 +1,7 @@
 ---
 # defaults file for grafana
 
-grafana_version: 2.6.0
+grafana_version: 3.0.4
 
 grafana_app_mode: production
 grafana_max_open_files: 10000
