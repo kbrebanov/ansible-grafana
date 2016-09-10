@@ -1,6 +1,5 @@
 # {{ ansible_managed }}
 
-# Set to true to log user information returned from LDAP
 {% if grafana_auth_ldap_verbose_logging %}
 verbose_logging = true
 {% else %}
@@ -8,58 +7,50 @@ verbose_logging = false
 {% endif %}
 
 [[servers]]
-# Ldap server host (specify multiple hosts space separated)
 host = "{{ grafana_auth_ldap_servers_host }}"
-# Default port is 389 or 636 if use_ssl = true
 port = {{ grafana_auth_ldap_servers_port }}
-# Set to true if ldap server supports TLS
 {% if grafana_auth_ldap_servers_use_ssl %}
 use_ssl = true
 {% else %}
 use_ssl = false
 {% endif %}
-# set to true if you want to skip ssl cert validation
 {% if grafana_auth_ldap_servers_ssl_skip_verify %}
 ssl_skip_verify = true
 {% else %}
 ssl_skip_verify = false
 {% endif %}
-# set to the path to your root CA certificate or leave unset to use system defaults
 {% if grafana_auth_ldap_servers_root_ca_cert %}
 root_ca_cert = {{ grafana_auth_ldap_servers_root_ca_cert }}
-{% else %}
-# root_ca_cert = /path/to/certificate.crt
 {% endif %}
-
-# Search user bind dn
 bind_dn = "{{ grafana_auth_ldap_servers_bind_dn }}"
-# Search user bind password
 bind_password = '{{ grafana_auth_ldap_servers_bind_password }}'
-
-# User search filter, for example "(cn=%s)" or "(sAMAccountName=%s)" or "(uid=%s)"
 search_filter = "{{ grafana_auth_ldap_servers_search_filter }}"
-
-# An array of base dns to search through
-search_base_dns = ["{{ grafana_auth_ldap_servers_search_base_dns }}"]
-
-# In POSIX LDAP schemas, without memberOf attribute a secondary query must be made for groups.
-# This is done by enabling group_search_filter below. You must also set member_of= "cn"
-# in [servers.attributes] below.
-
-## Group search filter, to retrieve the groups of which the user is a member (only set if memberOf attribute is not available)
+{% if grafana_auth_ldap_servers_search_base_dns %}
+search_base_dns = [
+{% for base_dns in grafana_auth_ldap_servers_search_base_dns %}
+{% if not loop.last %}
+  "{{ base_dns }}",
+{% else %}
+  "{{ base_dns }}"
+{% endif %}
+{% endfor %}
+]
+{% endif %}
 {% if grafana_auth_ldap_servers_group_search_filter %}
 group_search_filter = "{{ grafana_auth_ldap_servers_group_search_filter }}"
-{% else %}
-# group_search_filter = "(&(objectClass=posixGroup)(memberUid=%s))"
 {% endif %}
-## An array of the base DNs to search through for groups. Typically uses ou=groups
 {% if grafana_auth_ldap_servers_group_search_base_dns %}
-group_search_base_dns = ["{{ grafana_auth_ldap_servers_group_search_base_dns }}"]
+group_search_base_dns = [
+{% for base_dns in grafana_auth_ldap_servers_group_search_base_dns %}
+{% if not loop.last %}
+  "{{ base_dns }}",
 {% else %}
-# group_search_base_dns = ["ou=groups,dc=grafana,dc=org"]
+  "{{ base_dns }}"
+{% endif %}
+{% endfor %}
+]
 {% endif %}
 
-# Specify names of the ldap attributes your ldap uses
 [servers.attributes]
 name = "{{ grafana_auth_ldap_servers_attributes_name }}"
 surname = "{{ grafana_auth_ldap_servers_attributes_surname }}"
@@ -67,7 +58,6 @@ username = "{{ grafana_auth_ldap_servers_attributes_username }}"
 member_of = "{{ grafana_auth_ldap_servers_attributes_member_of }}"
 email =  "{{ grafana_auth_ldap_servers_attributes_email }}"
 
-# Map ldap groups to grafana org roles
 {% for group_mappings in grafana_auth_ldap_servers_group_mappings %}
 [[servers.group_mappings]]
 group_dn = "{{ group_mappings.group_dn }}"

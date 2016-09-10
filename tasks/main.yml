@@ -6,13 +6,8 @@
   tags:
     - grafana
 
-- include: CentOS.yml
-  when: ansible_distribution == "CentOS"
-  tags:
-    - grafana
-
-- include: Ubuntu.yml
-  when: ansible_distribution == "Ubuntu"
+- name: Include distribution specific tasks
+  include: "{{ ansible_distribution }}.yml"
   tags:
     - grafana
 
